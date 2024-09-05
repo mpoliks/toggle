@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mute/Unmute</title>
+</head>
+<body>
+    <button id="muteButton" onclick="toggleMute()">Mute</button>
+
+    <script>
+        let isMuted = false;
+
+        function toggleMute() {
+            isMuted = !isMuted;
+            const muteButton = document.getElementById('muteButton');
+            
+            // Change the button text
+            muteButton.textContent = isMuted ? 'Unmute' : 'Mute';
+            
+            // Send the new state to the backend
+            fetch('http://34.66.128.13:8080/update-volume', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    muted: isMuted
+                }),
+            })
+            .then(response => response.json())
+            .then(data => console.log('Success:', data))
+            .catch((error) => console.error('Error:', error));
+        }
+    </script>
+</body>
+</html>
