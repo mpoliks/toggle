@@ -3,21 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mute/Unmute</title>
+    <title>Volume Control</title>
 </head>
 <body>
-    <button id="muteButton" onclick="toggleMute()">Mute</button>
+    <button id="volumeButton" onclick="toggleVolume()">Muted</button>
 
     <script>
-    let isMuted = false;
-    
-    function toggleMute() {
-        isMuted = !isMuted;
-        const muteButton = document.getElementById('muteButton');
-    
-        // Change the button text
-        muteButton.textContent = isMuted ? 'Unmute' : 'Mute';
-    
+    // Define three volume states
+    let volumeStates = ['Muted', 'Soft', 'Show'];
+    let currentState = 0; // 0 is Muted, 1 is Soft, 2 is Show
+
+    function toggleVolume() {
+        currentState = (currentState + 1) % volumeStates.length; // Cycle through states
+        const volumeButton = document.getElementById('volumeButton');
+        
+        // Change the button text based on the current state
+        volumeButton.textContent = volumeStates[currentState];
+        
         // Send the new state to the backend using the secure HTTPS URL
         fetch('https://api.marekpoliks.com/update-volume', {
             method: 'POST',
@@ -25,7 +27,7 @@
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                muted: isMuted
+                state: volumeStates[currentState].toLowerCase() // Send state to backend
             }),
         })
         .then(response => response.json())
