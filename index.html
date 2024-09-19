@@ -9,25 +9,30 @@
     <button id="volumeButton" onclick="toggleVolume()">Muted</button>
 
     <script>
-    // Define three volume states
-    let volumeStates = ['Muted', 'Soft', 'Show'];
-    let currentState = 0; // 0 is Muted, 1 is Soft, 2 is Show
+    // Array for what the user sees on the button
+    let displayStates = ['CURRENTLY MUTED -- MAY TAKE UP TO 10 MINUTES TO COME INTO EFFECT', 'SOFT VOLUME -- PRESS FOR SHOW VOLUME', 'SHOW VOLUME -- PRESS TO MUTE'];
+    
+    // Array for what is sent to the backend
+    let backendStates = ['muted', 'soft', 'show'];
+    
+    let currentState = 0; // Tracks the current state (0 = Muted, 1 = Soft, 2 = Show)
 
     function toggleVolume() {
-        currentState = (currentState + 1) % volumeStates.length; // Cycle through states
+        currentState = (currentState + 1) % displayStates.length; // Cycle through the states
+        
         const volumeButton = document.getElementById('volumeButton');
         
-        // Change the button text based on the current state
-        volumeButton.textContent = volumeStates[currentState];
+        // Update the button text to show what the user sees
+        volumeButton.textContent = displayStates[currentState];
         
-        // Send the new state to the backend using the secure HTTPS URL
+        // Send the corresponding backend state to the server
         fetch('https://api.marekpoliks.com/update-volume', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                state: volumeStates[currentState].toLowerCase() // Send state to backend
+                state: backendStates[currentState] // Send backend state
             }),
         })
         .then(response => response.json())
